@@ -26,7 +26,7 @@ function show_downloadManager(){
     FILE=`$DIALOG --backtitle "DOWNLOAD MANAGER"  --stdout --title "Please choose a file" --fselect $HOME/Desktop/ 20 80`
     case $? in
         0)
-        $(grep -oE '(http|https)://(.*)' $FILE >> Downloaded.txt | aria2c -i Downloaded.txt);;
+        $(grep -oE '(http|https)://(.*)' $FILE > LastDownloaded.txt | grep -oE '(http|https)://(.*)' $FILE >> Downloaded.txt | aria2c -i LastDownloaded.txt);;
         1)
         echo "Cancel pressed.";;
         255)
