@@ -26,7 +26,14 @@ function show_downloadManager(){
     FILE=`$DIALOG --backtitle "DOWNLOAD MANAGER"  --stdout --title "Please choose a file" --fselect $HOME/Desktop/ 20 80`
     case $? in
         0)
+            #
+            # aria2c ile yapilan indirmelerden yanlzica basarili olanlari Downloaded.txt ye eklenmeli ve arayuzde basarili indirmeler gosterilmeli
+            #
         $(grep -oE '(http|https)://(.*)' $FILE > LastDownloaded.txt | grep -oE '(http|https)://(.*)' $FILE >> Downloaded.txt | aria2c -i LastDownloaded.txt);;
+        #
+        # grep suan ayni satirdaki iki farkli URL i ayiramiyor tek bi URL gibi goruyor ve ayni satirdaki coklu linklerin tamami
+        # patliyor. http|https ile baslayan (' ') ile bilen bir grep yazilmali
+        #
         1)
         echo "Cancel pressed.";;
         255)
@@ -38,7 +45,6 @@ function show_downloadManager(){
 #
 while true
 do
-    
     ### display main menu ###
     dialog --clear  --backtitle "CE350 ---- Download Manager Application ---- Onat Çakır | Yiğitcan Yılmaz  " \
     --title "  [ M A I N - M E N U ]" \
@@ -62,3 +68,13 @@ done
 # if temp files found, delete em
 [ -f $OUTPUT ] && rm $OUTPUT
 [ -f $INPUT ] && rm $INPUT
+
+
+
+
+#
+#tek bir indirme icin wget gauge arayuzu ornegi
+#biz wget yerine aria2c kullanmalliyiz daha genis kapsamli oldugu icin
+#
+#URL="https://i.redd.it/uwf82p55nzg01.jpg"
+#wget "$URL" 2>&1 | stdbuf -o0 awk '/[.] +[0-9][0-9]?[0-9]?%/ { print substr($0,63,3) }' | dialog --gauge "Download Test" 10 100
