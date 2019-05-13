@@ -22,16 +22,20 @@ function show_downloaded(){
 # Purpose - display a donwload manager
 #
 function show_downloadManager(){
-    # FILE= dialog --backtitle "DOWNLOAD MANAGER" --stdout --title "Please choose a file" --fselect $HOME/Desktop 20 80
     FILE=`$DIALOG --backtitle "DOWNLOAD MANAGER"  --stdout --title "Please choose a file" --fselect $HOME/Desktop/ 20 80`
     case $? in
         0)
-            #
-            # aria2c ile yapilan indirmelerden yanlzica basarili olanlari Downloaded.txt ye eklenmeli ve arayuzde basarili indirmeler gosterilmeli
-            #
-        $(grep -oE '(http|https):\/\/[^ ]*' $FILE > LastDownloaded.txt| grep -oE '(http|https):\/\/[^ ]*' $FILE >> Downloaded.txt | aria2c -i LastDownloaded.txt );;
+            grep -oE '(http|https):\/\/[^ ]*' $FILE > LastDownloaded.txt #| grep -oE '(http|https):\/\/[^ ]*' $FILE >> Downloaded.txt
+            while read p; do
+                wget "$p" 2>&1 | \
+                stdbuf -o0 awk '/[.] +[0-9][0-9]?[0-9]?%/ { print substr($0,63,3) }' | dialog --gauge "$p" 10 100
+                echo "$p" >> Downloaded.txt
+            done <LastDownloaded.txt
+            clear
+            dialog --infobox "All files are downloaded" 5 28
+        sleep 2 ;;
         1)
-        echo "Cancel pressed.";;
+        dialog --infobox "Error" 5 25 ;;
         255)
         echo "Box closed.";;
     esac
@@ -47,7 +51,7 @@ do
     --menu "\n    You can use the UP/DOWN arrow keys or \n\
     number keys 1-9 to choose an option." 15 50 4 \
     1 "New Download" \
-    2 "Show Downloaded" \
+    2 "Download History" \
     3 "Exit" 2>"${INPUT}"
     
     menuitem=$(<"${INPUT}")
@@ -64,13 +68,3 @@ done
 # if temp files found, delete em
 [ -f $OUTPUT ] && rm $OUTPUT
 [ -f $INPUT ] && rm $INPUT
-
-
-
-
-#
-#tek bir indirme icin wget gauge arayuzu ornegi
-#biz wget yerine aria2c kullanmalliyiz daha genis kapsamli oldugu icin
-#
-#URL="https://i.redd.it/uwf82p55nzg01.jpg"
-#wget "$URL" 2>&1 | stdbuf -o0 awk '/[.] +[0-9][0-9]?[0-9]?%/ { print substr($0,63,3) }' | dialog --gauge "Download Test" 10 100
