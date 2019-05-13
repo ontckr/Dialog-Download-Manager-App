@@ -1,6 +1,5 @@
 #!/bin/bash
-INPUT=/tmp/menu.sh.$$
-OUTPUT=/tmp/output.sh.$$
+INPUT=$$
 DIALOG=${DIALOG=dialog}
 
 function display_downloaded(){
@@ -13,7 +12,6 @@ function display_downloaded(){
 # Purpose - display history
 #
 function show_downloaded(){
-    echo "Today is $(date) @ $(hostname -f)." >$OUTPUT
     display_downloaded 30 80 "Download History"
 }
 #
