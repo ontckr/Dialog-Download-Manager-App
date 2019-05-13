@@ -2,8 +2,6 @@
 INPUT=/tmp/menu.sh.$$
 OUTPUT=/tmp/output.sh.$$
 DIALOG=${DIALOG=dialog}
-# trap and delete temp files
-trap "rm $OUTPUT; rm $INPUT; exit" SIGHUP SIGINT SIGTERM
 
 function display_downloaded(){
     local h=${1-10}			# box height default 10
@@ -12,7 +10,7 @@ function display_downloaded(){
     dialog --backtitle "DOWNLOAD HISTORY" --title "${t}" --clear --msgbox "$(cat Downloaded.txt)" ${h} ${w}
 }
 #
-# Purpose - display downloaded file
+# Purpose - display history
 #
 function show_downloaded(){
     echo "Today is $(date) @ $(hostname -f)." >$OUTPUT
@@ -45,26 +43,24 @@ function show_downloadManager(){
 #
 while true
 do
-    ### display main menu ###
+    #
+    #display main menu
+    #
     dialog --clear  --backtitle "CE350 ---- Download Manager Application ---- Onat Çakır | Yiğitcan Yılmaz  " \
     --title "  [ M A I N - M E N U ]" \
     --menu "\n    You can use the UP/DOWN arrow keys or \n\
-    number keys 1-9 to choose an option." 15 50 4 \
+    number keys 1-3 to choose an option." 15 50 4 \
     1 "New Download" \
     2 "Download History" \
     3 "Exit" 2>"${INPUT}"
     
     menuitem=$(<"${INPUT}")
-    
+    #
     # make decsion
+    #
     case $menuitem in
         1) show_downloadManager;;
         2) show_downloaded;;
         3) echo "Bye"; break;;
     esac
-    
 done
-
-# if temp files found, delete em
-[ -f $OUTPUT ] && rm $OUTPUT
-[ -f $INPUT ] && rm $INPUT
