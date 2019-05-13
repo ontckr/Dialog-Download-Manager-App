@@ -23,7 +23,7 @@ function show_downloadManager(){
     FILE=`$DIALOG --backtitle "DOWNLOAD MANAGER"  --stdout --title "Please choose a file" --fselect $HOME/Desktop/ 20 80`
     case $? in
         0)
-            grep -oE '(http|https):\/\/[^ ]*' $FILE > LastDownloaded.txt #| grep -oE '(http|https):\/\/[^ ]*' $FILE >> Downloaded.txt
+            grep -oE '(http|https):\/\/[^ ]*' $FILE > LastDownloaded.txt
             while read p; do
                 wget "$p" 2>&1 | \
                 stdbuf -o0 awk '/[.] +[0-9][0-9]?[0-9]?%/ { print substr($0,63,3) }' | dialog --gauge "$p" 10 100
