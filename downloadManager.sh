@@ -29,11 +29,7 @@ function show_downloadManager(){
             #
             # aria2c ile yapilan indirmelerden yanlzica basarili olanlari Downloaded.txt ye eklenmeli ve arayuzde basarili indirmeler gosterilmeli
             #
-        $(grep -oE '(http|https)://(.*)' $FILE > LastDownloaded.txt | grep -oE '(http|https)://(.*)' $FILE >> Downloaded.txt | aria2c -i LastDownloaded.txt);;
-        #
-        # grep suan ayni satirdaki iki farkli URL i ayiramiyor tek bi URL gibi goruyor ve ayni satirdaki coklu linklerin tamami
-        # patliyor. http|https ile baslayan (' ') ile bilen bir grep yazilmali
-        #
+        $(grep -oE '(http|https):\/\/[^ ]*' $FILE > LastDownloaded.txt| grep -oE '(http|https):\/\/[^ ]*' $FILE >> Downloaded.txt | aria2c -i LastDownloaded.txt );;
         1)
         echo "Cancel pressed.";;
         255)
