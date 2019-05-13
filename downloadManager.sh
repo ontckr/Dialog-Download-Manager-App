@@ -1,6 +1,11 @@
 #!/bin/bash
-INPUT=$$
+INPUT=/tmp/menu.sh.$$
+OUTPUT=/tmp/output.sh.$$
+
 DIALOG=${DIALOG=dialog}
+
+# trap and delete temp files
+trap "rm $OUTPUT; rm $INPUT; exit" SIGHUP SIGINT SIGTERM
 
 function display_downloaded(){
     local h=${1-10}			# box height default 10
@@ -12,6 +17,8 @@ function display_downloaded(){
 # Purpose - display history
 #
 function show_downloaded(){
+    echo "Today is $(date) @ $(hostname -f)." >$OUTPUT
+    
     display_downloaded 30 80 "Download History"
 }
 #
@@ -62,3 +69,6 @@ do
         3) echo "Bye"; break;;
     esac
 done
+# if temp files found, delete em
+[ -f $OUTPUT ] && rm $OUTPUT
+[ -f $INPUT ] && rm $INPUT
